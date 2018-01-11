@@ -7,15 +7,13 @@ Usage
 ---
 Turn on the fetcher
 ```go
-import coin "github.com/cjongseok/coinfetcher"
-coin.Start(0)
-coin.WaitForFetching()
+coinfetcher.Start(0)
+coinfetcher.WaitForFetching()
 ```
 And get desired data anytime
 ```go
-coin.Get("BTC")      // BTC data
-coin.All()           // all coin data
-coin.TotalMarket()   // market data
+coinfetcher.Get("BTC")      // BTC data
+coinfetcher.All()           // all coin data
+coinfetcher.TotalMarket()   // market data
 
 ```
-
