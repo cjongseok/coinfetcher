@@ -1,6 +1,6 @@
 coinfetcher
 ===
-Periodically fetch cryptocurrency data from **coinmarketcap.com** using **github.com/miguelmota/go-coinmarketcap**.
+Periodically fetch cryptocurrency data from [coinmarketcap.com](https://coinmarketcap.com/api) using [miguelmota/go-coinmarketcap](https://github.com/miguelmota/go-coinmarketcap).
 The fetcher pulls data every 5 minutes, which is same with the coinmarketcap.com API endpoint update cycle.
 
 Usage
