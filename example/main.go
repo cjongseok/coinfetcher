@@ -8,7 +8,7 @@ import (
 
 func main() {
 	fmt.Println("Start")
-	coin.Start(0)
+	coin.Start()
 	fmt.Printf("%s: Fetched? %v\n", time.Now(), coin.Fetched())
 	coin.WaitForFetching()
 	fmt.Printf("%s: Fetched? %v\n", time.Now(), coin.Fetched())

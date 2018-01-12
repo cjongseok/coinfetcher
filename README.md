@@ -7,7 +7,7 @@ Usage
 ---
 Turn on the fetcher
 ```go
-coinfetcher.Start(0)
+coinfetcher.Start()
 coinfetcher.WaitForFetching()
 ```
 And get desired data anytime

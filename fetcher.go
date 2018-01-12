@@ -30,7 +30,10 @@ var nextCoinFetchTime time.Time
 var nextMarketFetchTime time.Time
 
 // 0 means all the coins
-func Start(coinLimit int) {
+func Start() {
+	StartLimit(0)
+}
+func StartLimit(coinLimit int) {
 	m.Lock()
 	defer m.Unlock()
 	if started {
