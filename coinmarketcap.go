@@ -94,12 +94,24 @@ func fetchMarket() {
 		}
 	}()
 }
+
 func fetchCoin() chan api.Coin {
 	out := make(chan api.Coin)
 	go func() {
 		defer wg.Done()
 		var fetchDelay time.Duration
-		var stopStreaming bool
+		var streaming bool
+		streamMutex := sync.Mutex{}
+		isStreaming := func() bool {
+			streamMutex.Lock()
+			defer streamMutex.Unlock()
+			return streaming
+		}
+		stopStreaming := func() {
+			streamMutex.Lock()
+			defer streamMutex.Unlock()
+			streaming = false
+		}
 		fetch := func() (changed map[string]api.Coin) {
 			changed = make(map[string]api.Coin)
 			coins, err := api.GetAllCoinData(limit)
@@ -128,7 +140,7 @@ func fetchCoin() chan api.Coin {
 				recover()
 			}()
 			for _, c := range coins {
-				if !stopStreaming {
+				if isStreaming() {
 					to <- c
 				}
 			}
@@ -139,7 +151,7 @@ func fetchCoin() chan api.Coin {
 			nextCoinFetchTime = coinFetchedTime.Add(fetchDelay)
 			select {
 			case <-coinFetchInterrupt:
-				stopStreaming = true
+				stopStreaming()
 				close(out)
 				return
 			case <-time.After(fetchDelay):
