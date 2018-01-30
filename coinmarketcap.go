@@ -3,10 +3,12 @@ package coinfetcher
 import (
 	"sync"
 	"time"
+	"github.com/cjongseok/slog"
 	api "github.com/cjongseok/go-coinmarketcap"
 )
 
 const (
+	logTag = "[CoinFetcher]"
 	//normalDelay  = 5 * time.Minute // see https://coinmarketcap.com/api/#Limits
 	retryDelay   = 5 * time.Second
 	allCoinLimit = 10000
@@ -30,10 +32,10 @@ var marketFetchedTime time.Time
 var nextCoinFetchTime time.Time
 var nextMarketFetchTime time.Time
 // 0 means all the coins
-func Start(period time.Duration) chan api.Coin {
+func Start(period time.Duration) chan []api.Coin {
 	return StartLimit(period, 0)
 }
-func StartLimit(period time.Duration, coinLimit int) chan api.Coin {
+func StartLimit(period time.Duration, coinLimit int) chan []api.Coin {
 	m.Lock()
 	defer m.Unlock()
 	if started {
@@ -70,6 +72,7 @@ func fetchMarket() {
 		fetch := func() bool {
 			market, err := api.GetMarketData()
 			if err != nil {
+				slog.Logf(logTag, "market fetch failure: %s\n", err)
 				fetchDelay = retryDelay
 				return false
 			}
@@ -95,12 +98,12 @@ func fetchMarket() {
 	}()
 }
 
-func fetchCoin() chan api.Coin {
-	out := make(chan api.Coin)
+func fetchCoin() chan []api.Coin {
+	out := make(chan []api.Coin)
 	go func() {
 		defer wg.Done()
 		var fetchDelay time.Duration
-		var streaming bool
+		streaming := true
 		streamMutex := sync.Mutex{}
 		isStreaming := func() bool {
 			streamMutex.Lock()
@@ -116,6 +119,7 @@ func fetchCoin() chan api.Coin {
 			changed = make(map[string]api.Coin)
 			coins, err := api.GetAllCoinData(limit)
 			if err != nil {
+				slog.Logf(logTag, "coin fetch failure: %s\n", err)
 				fetchDelay = retryDelay
 				return
 			}
@@ -134,15 +138,22 @@ func fetchCoin() chan api.Coin {
 			coinFetchedTime = time.Now()
 			return
 		}
-		stream := func(coins map[string]api.Coin, to chan api.Coin) {
+		stream := func(coins map[string]api.Coin, to chan []api.Coin) {
+			if len(coins) < 1 {
+				return
+			}
 			defer func() {
 				// handle panics on pushing to closed channel
 				recover()
 			}()
+			slice := make([]api.Coin, len(coins))
+			i := 0
 			for _, c := range coins {
-				if isStreaming() {
-					to <- c
-				}
+				slice[i] = c
+				i++
+			}
+			if isStreaming() {
+				to <- slice
 			}
 		}
 		newCoins := fetch()
