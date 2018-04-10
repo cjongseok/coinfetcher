@@ -10,11 +10,12 @@ import (
 const (
 	logTag = "[CoinFetcher]"
 	//normalDelay  = 5 * time.Minute // see https://coinmarketcap.com/api/#Limits
+	defaultDelay = time.Minute
 	retryDelay   = 5 * time.Second
 	allCoinLimit = 10000
 )
 
-var normalDelay = 5 * time.Minute
+var normalDelay time.Duration
 var limit = allCoinLimit
 var m sync.Mutex
 var wg sync.WaitGroup
@@ -31,17 +32,18 @@ var coinFetchedTime time.Time
 var marketFetchedTime time.Time
 var nextCoinFetchTime time.Time
 var nextMarketFetchTime time.Time
+
 // 0 means all the coins
-func Start(period time.Duration) chan []api.Coin {
-	return StartLimit(period, 0)
+func Start() chan []api.Coin {
+	return StartLimit(defaultDelay, 0)
 }
-func StartLimit(period time.Duration, coinLimit int) chan []api.Coin {
+func StartLimit(delay time.Duration, coinLimit int) chan []api.Coin {
 	m.Lock()
 	defer m.Unlock()
 	if started {
 		return nil
 	}
-	normalDelay = period
+	normalDelay = delay
 	if coinLimit != 0 {
 		limit = coinLimit
 	}

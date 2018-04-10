@@ -1,28 +1,23 @@
 coinfetcher
 ===
-Periodically fetch cryptocurrency data from [coinmarketcap.com](https://coinmarketcap.com/api) using [miguelmota/go-coinmarketcap](https://github.com/miguelmota/go-coinmarketcap).
-The fetcher pulls data every 5 minutes, which is same with the coinmarketcap.com API endpoint update cycle.
-
-Supported exchanges/services:
-* coinmarketcap.com
-* bitfinex
-* binance
-* bittrex
-* bithumb
-* coinone
-
+Cache for CoinMarketCap ticks.
+It periodically fetch coin ticks from [coinmarketcap.com](https://coinmarketcap.com/api) using [miguelmota/go-coinmarketcap](https://github.com/miguelmota/go-coinmarketcap).
 
 Usage
 ---
 Turn on the fetcher
 ```go
-coinfetcher.Start()
+coinfetcher.Start()         // default fetching delay is 5 minutes.
 coinfetcher.WaitForFetching()
 ```
-And get desired data anytime
+And get ticks.
 ```go
-coinfetcher.Get("BTC")      // BTC data
-coinfetcher.All()           // all coin data
+coinfetcher.Get("BTC")      // recent BTC tick
+coinfetcher.All()           // all the recent ticks
 coinfetcher.TotalMarket()   // market data
 
 ```
+
+See Also
+---
+* [cjongseok/fetch-bittrex](https://github.com/cjongseok/fetch-bittrex)
