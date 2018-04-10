@@ -1,4 +1,4 @@
-package coinfetcher
+package fetcher
 
 import (
 	"sync"

@@ -1,7 +1,7 @@
 package main
 
 import (
-	coin "github.com/cjongseok/coinfetcher"
+	coin "github.com/cjongseok/fetch-coinmarketcap"
 	"fmt"
 	"time"
 	"github.com/cjongseok/slog"
