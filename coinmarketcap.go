@@ -206,7 +206,11 @@ func NextMarketFetchTime() time.Time {
 	return nextMarketFetchTime
 }
 func Close() {
-	close(coinFetchInterrupt)
-	close(marketFetchInterrupt)
+	if coinFetchInterrupt != nil {
+		close(coinFetchInterrupt)
+	}
+	if marketFetchInterrupt != nil {
+		close(marketFetchInterrupt)
+	}
 	wg.Wait()
 }
