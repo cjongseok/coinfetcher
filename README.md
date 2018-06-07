@@ -5,17 +5,18 @@ It periodically fetch coin ticks from [coinmarketcap.com](https://coinmarketcap.
 
 Usage
 ---
-Turn on the fetcher
 ```go
+// Turn on the fetcher
 coinfetcher.Start()         // default fetching delay is 5 minutes.
 coinfetcher.WaitForFetching()
-```
-And get ticks.
-```go
+
+// Get ticks
 coinfetcher.Get("BTC")      // recent BTC tick
 coinfetcher.All()           // all the recent ticks
 coinfetcher.TotalMarket()   // market data
 
+// Retrieve ticks
+exactMatches, partialMatches := coinfetcher.Search("neo eos")
 ```
 
 See Also
