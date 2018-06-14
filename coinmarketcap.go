@@ -205,8 +205,11 @@ func All() map[string]api.Coin {
 	return nil
 }
 func Get(coinsymbol string) api.Coin {
+	symbol := strings.ToUpper(coinsymbol)
 	if coinFetched {
-		return *symbolMap[coinsymbol]
+		if coin, ok := symbolMap[symbol]; ok && coin != nil {
+			return *coin
+		}
 	}
 	return api.Coin{}
 }
